@@ -56,6 +56,18 @@ void SnakeGame::paintEvent(QPaintEvent *event)
     painter.drawEllipse(m_food.x() * m_blockSize, m_food.y() * m_blockSize,
                         m_blockSize - 1, m_blockSize - 1);
 
+    // 绘制游戏状态提示
+    if (m_gameOver) {
+        painter.fillRect(rect(), QColor(0, 0, 0, 150));
+        painter.setPen(Qt::white);
+        painter.setFont(QFont("微软雅黑", 16, QFont::Bold));
+        painter.drawText(rect(), Qt::AlignCenter, "游戏结束,按R重新开始");
+    } else if (m_paused) {
+        painter.fillRect(rect(), QColor(0, 0, 0, 150));
+        painter.setPen(Qt::white);
+        painter.setFont(QFont("微软雅黑", 16, QFont::Bold));
+        painter.drawText(rect(), Qt::AlignCenter, "已暂停\n按空格键继续");
+    }
 }
 
 void SnakeGame::keyPressEvent(QKeyEvent *event)
@@ -73,6 +85,22 @@ void SnakeGame::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_Right:
         if (m_dir != LEFT) m_dir = RIGHT;
+        break;
+    case Qt::Key_Space: // 空格键：暂停/继续游戏
+        m_paused = !m_paused;
+        m_paused ? m_timer->stop() : m_timer->start();
+        update();
+        break;
+    case Qt::Key_R: // R键：游戏结束后重新开始
+        if (m_gameOver) {
+            m_gameOver = false;
+            m_dir = RIGHT;
+            m_snake.clear();
+            m_snake << QPoint(9, 9) << QPoint(8, 9) << QPoint(7, 9);
+            generateFood();
+            m_timer->start();
+            update();
+        }
         break;
     default:
         QWidget::keyPressEvent(event);
