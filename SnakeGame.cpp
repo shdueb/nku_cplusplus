@@ -74,22 +74,6 @@ void SnakeGame::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Right:
         if (m_dir != LEFT) m_dir = RIGHT;
         break;
-    case Qt::Key_Space: // 空格键：暂停/继续游戏
-        m_paused = !m_paused;
-        m_paused ? m_timer->stop() : m_timer->start();
-        update();
-        break;
-    case Qt::Key_R: // R键：游戏结束后重新开始
-        if (m_gameOver) {
-            m_gameOver = false;
-            m_dir = RIGHT;
-            m_snake.clear();
-            m_snake << QPoint(9, 9) << QPoint(8, 9) << QPoint(7, 9);
-            generateFood();
-            m_timer->start();
-            update();
-        }
-        break;
     default:
         QWidget::keyPressEvent(event);
     }
